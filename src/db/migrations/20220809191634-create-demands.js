@@ -11,6 +11,16 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
+      systemId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'Systems', key: 'id' },
+      },
+      authorizedPersonId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'AuthorizedPersons', key: 'id' },
+      },
       priority: {
         type: Sequelize.STRING,
       },
@@ -18,6 +28,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       status: {
+        type: Sequelize.STRING,
+      },
+      post: {
         type: Sequelize.STRING,
       },
       start_development: {

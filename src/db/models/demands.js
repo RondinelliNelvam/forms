@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     priority: DataTypes.STRING,
     demand_type: DataTypes.STRING,
     status: DataTypes.STRING,
+    post: DataTypes.STRING,
     start_development: DataTypes.DATEONLY,
     end_development: DataTypes.DATEONLY
   }, {

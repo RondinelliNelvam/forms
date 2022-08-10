@@ -1,24 +1,18 @@
 const { Router } = require('express')
-const systemController = require('../controllers/adm/systemController')
-const AuthorizedPersonsController = require('../controllers/adm/authorizedPersonsController')
+const SystemController = require('../controllers/adm/systemController')
+const AuthorizedController = require('../controllers/adm/authorizedPersonsController')
 const router = Router()
 
 router
-  .post('/system', systemController.createSystem)
-  .put('/system/:id', systemController.attSystem)
-  .get('/system', systemController.findAllSystem)
-  .get('/system/:id', systemController.findOneSystem)
-  .delete('/system/:id', systemController.deleteSystem)
-  .post('/authorizedPerson', AuthorizedPersonsController.createAuthorizedPerson)
-  .put('/authorizedPerson/:id', AuthorizedPersonsController.attAuthorizedPerson)
-  .get('/authorizedPerson', AuthorizedPersonsController.findAllAuthorizedPerson)
-  .get(
-    '/authorizedPerson/:id',
-    AuthorizedPersonsController.findOneAuthorizedPerson
-  )
-  .delete(
-    '/authorizedPerson/:id',
-    AuthorizedPersonsController.deleteAuthorizedPerson
-  )
+  .post('/system', SystemController.createSystem)
+  .put('/system/:id', SystemController.attSystem)
+  .get('/system', SystemController.findAllSystem)
+  .get('/system/:id', SystemController.findOneSystem)
+  .delete('/system/:id', SystemController.deleteSystem)
+  .post('/authorizedPerson', AuthorizedController.createAuthorizedPerson)
+  .put('/authorizedPerson/:id', AuthorizedController.attAuthorizedPerson)
+  .get('/authorizedPerson', AuthorizedController.findAllAuthorizedPerson)
+  .get('/authorizedPerson/:id', AuthorizedController.findOneAuthorizedPerson)
+  .delete('/authorizedPerson/:id', AuthorizedController.deleteAuthorizedPerson)
 
 module.exports = router

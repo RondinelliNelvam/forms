@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      name_demand: {
         type: Sequelize.STRING,
       },
       systemId: {
@@ -29,6 +29,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.STRING,
+        defaultValue: 'Aguardando',
       },
       post: {
         type: Sequelize.STRING,

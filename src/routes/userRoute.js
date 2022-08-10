@@ -4,8 +4,8 @@ const router = Router()
 
 router
   .post('/demand', DemandsController.createDemand)
-  .put('/demand/:id', DemandsController.attDemand)
   .get('/demand', DemandsController.findAllDemands)
   .get('/demand/:id', DemandsController.findOneDemand)
+  .put('/demand/:id', DemandsController.attDemand)
   .delete('/demand/:id', DemandsController.deleteDemand)
 module.exports = router

@@ -8,9 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Demands.belongsTo(models.System, {
-        foreignKey: 'systemId',
-      })
+      Demands.belongsTo(models.System)
       Demands.belongsTo(models.AuthorizedPersons, {
         foreignKey: 'authorizedPersonId',
       })
@@ -18,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Demands.init(
     {
-      name: DataTypes.STRING,
+      name_demand: DataTypes.STRING,
       priority: DataTypes.STRING,
       demand_type: DataTypes.STRING,
       status: DataTypes.STRING,

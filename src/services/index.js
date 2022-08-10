@@ -1,5 +1,5 @@
 const SystemServices = require('./SystemServices')
-const AuthorizedPersonsServices = require('./AuthorizedPersons')
+const AuthorizedPersonsServices = require('./AuthorizedPersonsService')
 
 module.exports = {
   SystemServices: SystemServices,

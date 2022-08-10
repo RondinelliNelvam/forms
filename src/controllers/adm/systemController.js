@@ -3,6 +3,14 @@ const { SystemServices } = require('../../services')
 const systemServices = new SystemServices()
 
 class SystemController {
+  static async findAllSystem(req, res) {
+    try {
+      const systemList = await systemServices.findAllRegistry()
+      return res.status(200).json(systemList)
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
   static async createSystem(req, res) {
     const system = req.body
     try {
@@ -14,11 +22,10 @@ class SystemController {
   }
   static async attSystem(req, res) {
     const { id } = req.params
-    const newInfo = req.body
+    const newData = req.body
     try {
-      await database.System.update(newInfo, { where: { id: Number(id) } })
-      const update = await database.System.findByPk(Number(id))
-      return res.status(200).json(update)
+      const update = await systemServices.attRegistry(newData, Number(id))
+      return res.status(200).json({ mensagem: `id ${id} atualizado` })
     } catch (error) {
       return res.status(500).json(error.message)
     }

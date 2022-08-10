@@ -5,8 +5,15 @@ class Services {
     this.nameModel = nameModel
   }
 
+  async findAllRegistry() {
+    return database[this.nameModel].findAll()
+  }
   async createRegistry(data) {
     return database[this.nameModel].create(data)
+  }
+
+  async attRegistry(newData, id) {
+    return database[this.nameModel].update(newData, { where: { id } })
   }
 }
 

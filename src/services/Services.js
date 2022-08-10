@@ -8,6 +8,9 @@ class Services {
   async findAllRegistry() {
     return database[this.nameModel].findAll()
   }
+  async findOneRegistry(id) {
+    return database[this.nameModel].findByPk(id)
+  }
   async createRegistry(data) {
     return database[this.nameModel].create(data)
   }

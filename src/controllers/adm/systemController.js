@@ -1,4 +1,3 @@
-// const database = require('../../db/models')
 const { SystemServices } = require('../../services')
 const systemServices = new SystemServices()
 
@@ -7,6 +6,15 @@ class SystemController {
     try {
       const systemList = await systemServices.findAllRegistry()
       return res.status(200).json(systemList)
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
+  static async findOneSystem(req, res) {
+    const { id } = req.params
+    try {
+      const oneSystem = await systemServices.findOneRegistry(Number(id))
+      return res.status(200).json(oneSystem)
     } catch (error) {
       return res.status(500).json(error.message)
     }

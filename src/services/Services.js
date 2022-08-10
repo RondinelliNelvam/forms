@@ -14,9 +14,12 @@ class Services {
   async createRegistry(data) {
     return database[this.nameModel].create(data)
   }
-
   async attRegistry(newData, id) {
     return database[this.nameModel].update(newData, { where: { id } })
+  }
+  async deleteRegistry(id) {
+    console.log(id)
+    return database[this.nameModel].destroy({ where: { id } })
   }
 }
 

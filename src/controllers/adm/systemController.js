@@ -38,6 +38,18 @@ class SystemController {
       return res.status(500).json(error.message)
     }
   }
+
+  static async deleteSystem(req, res) {
+    const { id } = req.params
+    try {
+      await systemServices.deleteRegistry(Number(id))
+      return res
+        .status(200)
+        .json({ mensagem: `id ${id} foi deletado com sucesso` })
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
 }
 
 module.exports = SystemController

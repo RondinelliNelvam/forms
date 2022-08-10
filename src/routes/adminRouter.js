@@ -9,5 +9,6 @@ router
   .put('/system/:id', systemController.attSystem)
   .get('/system', systemController.findAllSystem)
   .get('/system/:id', systemController.findOneSystem)
+  .delete('/system/:id', systemController.deleteSystem)
 
 module.exports = router

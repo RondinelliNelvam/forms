@@ -1,10 +1,10 @@
 const { Router } = require('express')
-const AdminController = require('../controllers/adm/adminController')
+const systemController = require('../controllers/adm/systemController')
 const router = Router()
 
 module.exports = router
 
 router
-  .post('/system', AdminController.createSystem)
-  .put('/system/:id', AdminController.attSystem)
+  .post('/system', systemController.createSystem)
+  .put('/system/:id', systemController.attSystem)
 module.exports = router

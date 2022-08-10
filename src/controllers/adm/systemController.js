@@ -1,10 +1,12 @@
-const database = require('../../db/models')
+// const database = require('../../db/models')
+const { SystemServices } = require('../../services')
+const systemServices = new SystemServices()
 
-class AdminController {
+class SystemController {
   static async createSystem(req, res) {
     const system = req.body
     try {
-      const newSystem = await database.System.create(system)
+      const newSystem = await systemServices.createRegistry(system)
       return res.status(200).json(newSystem)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -23,4 +25,4 @@ class AdminController {
   }
 }
 
-module.exports = AdminController
+module.exports = SystemController

@@ -8,12 +8,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      ReferenceLink.belongsTo(models.Demands)
+      ReferenceLink.belongsTo(models.Demands, { foreignKey: 'demandsId' })
+      // define association here
     }
   }
   ReferenceLink.init(
     {
-      name: DataTypes.STRING,
+      link: DataTypes.STRING,
     },
     {
       sequelize,

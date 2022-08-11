@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Demands.belongsTo(models.System)
       Demands.belongsTo(models.AuthorizedPersons)
-      Demands.hasMany(models.ReferenceLink)
+      Demands.hasMany(models.ReferenceLink, { foreignKey: 'demandsId' })
     }
   }
   Demands.init(

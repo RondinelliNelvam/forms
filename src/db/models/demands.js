@@ -29,3 +29,5 @@ module.exports = (sequelize, DataTypes) => {
   )
   return Demands
 }
+
+// System(Source) -> Demands(target)....Numerous Demands for One System

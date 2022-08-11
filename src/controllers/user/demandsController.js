@@ -23,7 +23,7 @@ class DemandsController {
     const demand = req.body
     try {
       const newDemand = await demandsService.createRegistry(demand)
-      return res.status(200).json(newDemand)
+      return res.status(201).json(newDemand)
     } catch (error) {
       return res.status(500).json(error.message)
     }

@@ -7,10 +7,17 @@ class DemandsService extends Services {
   }
 
   async findAllValuesOnRegistry() {
-    return database[this.nameModel].findAll({
+    return await database[this.nameModel].findAll({
+      attributes: { exclude: ['SystemId', 'AuthorizedPersonId'] },
       include: [
-        { model: database.System, as: 'System' },
-        { model: database.AuthorizedPersons, as: 'AuthorizedPerson' },
+        {
+          attributes: { exclude: ['id'] },
+          model: database.System,
+        },
+        {
+          attributes: { exclude: ['id'] },
+          model: database.AuthorizedPersons,
+        },
       ],
     })
   }

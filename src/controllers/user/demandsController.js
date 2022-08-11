@@ -1,5 +1,6 @@
-const { DemandsService } = require('../../services')
+const { DemandsService, ReferenceLinkServices } = require('../../services')
 const demandsService = new DemandsService()
+const ReferenceLinkService = new ReferenceLinkServices()
 
 class DemandsController {
   static async findAllDemands(req, res) {
@@ -21,9 +22,20 @@ class DemandsController {
   }
   static async createDemand(req, res) {
     const demand = req.body
+    const referenceLink = demand.referencia
     try {
       const newDemand = await demandsService.createRegistry(demand)
-      return res.status(201).json(newDemand)
+      if (newDemand) {
+        const newReference = referenceLink.map(
+          async (links) =>
+            await ReferenceLinkService.createRegistry({
+              link: links.link,
+              demandId: newDemand.id,
+            })
+        )
+        console.log(newReference)
+      }
+      return res.status(201).json({ a: newDemand, b: newReference })
     } catch (error) {
       return res.status(500).json(error.message)
     }

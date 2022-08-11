@@ -12,7 +12,7 @@ class Services {
     return database[this.nameModel].findByPk(id)
   }
   async createRegistry(data) {
-    return database[this.nameModel].create(data, { returning: true })
+    return database[this.nameModel].create(data)
   }
   async attRegistry(newData, id) {
     return database[this.nameModel].update(newData, { where: { id } })

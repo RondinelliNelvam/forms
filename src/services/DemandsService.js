@@ -21,7 +21,5 @@ class DemandsService extends Services {
       ],
     })
   }
-
-  async findOneRegistrywithFK() {}
 }
 module.exports = DemandsService

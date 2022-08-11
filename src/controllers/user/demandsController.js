@@ -4,7 +4,7 @@ const demandsService = new DemandsService()
 class DemandsController {
   static async findAllDemands(req, res) {
     try {
-      const demandsList = await demandsService.findAllRegistry()
+      const demandsList = await demandsService.findAllValuesOnRegistry()
       return res.status(200).json(demandsList)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -13,7 +13,7 @@ class DemandsController {
   static async findOneDemand(req, res) {
     const { id } = req.params
     try {
-      const oneDemand = await demandsService.findOneRegistry(Number(id))
+      const oneDemand = await demandsService.findOneRegistrywithFK(Number(id))
       return res.status(200).json(oneDemand)
     } catch (error) {
       return res.status(500).json(error.message)

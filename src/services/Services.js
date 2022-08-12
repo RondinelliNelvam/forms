@@ -12,6 +12,9 @@ class Services {
   async findOneRegistry(id) {
     return database[this.nameModel].findByPk(id)
   }
+  async findOneEmail(email) {
+    return database[this.nameModel].findOne({ where: { email } })
+  }
   async createRegistry(data) {
     return database[this.nameModel].create(data)
   }

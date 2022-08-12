@@ -1,5 +1,14 @@
 const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
+async function verificação(req, res, next) {
+  try {
+    const payload = jwt.verify(req.headers.token, 'senha-secreta')
+    next()
+  } catch (error) {}
+}
 
 class UserLoginController {
   static async findAllUsers(req, res) {
@@ -27,7 +36,7 @@ class UserLoginController {
       )
       const newUsers = await userLoginService.createRegistry(newData)
 
-      return res.status(200).json(newUsers)
+      return res.status(201).json(newUsers)
     } catch (error) {
       return res.status(500).json(error.message)
     }
@@ -54,6 +63,31 @@ class UserLoginController {
       return res.status(500).json(error.message)
     }
   }
-}
+  static async login(req, res) {
+    const { email, password } = req.body
+    try {
+      const login = await userLoginService.findOneEmail(email)
+      if (!login) {
+        return res.status(404).json({ message: 'Not Found' })
+      }
+      await bcrypt.compare(password, login.passwordHash)
+      const tokenJWT = jwt.sign(
+        { id: login.id, email: login.email },
+        'senha-secreta'
+      )
 
+      return res.status(200).json({
+        user: {
+          id: login.id,
+          email: login.email,
+          name: login.name,
+        },
+        token: tokenJWT,
+      })
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
+}
+//TODO MUDAR A SENHA SECRETA PARA .ENV
 module.exports = UserLoginController

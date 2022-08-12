@@ -15,7 +15,7 @@ class DemandsController {
   static async findOneDemand(req, res) {
     const { id } = req.params
     try {
-      const oneDemand = await demandsService.findOneRegistrywithFK(Number(id))
+      const oneDemand = await demandsService.findOneRegistry(Number(id))
       return res.status(200).json(oneDemand)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -30,7 +30,7 @@ class DemandsController {
       let newReference = []
       console.log(demandId)
       if (newDemand) {
-        newReference = referenceLink.forEach((object) => ({
+        newReference = referenceLink.map((object) => ({
           link: object.link,
           demandsId: demandId,
         }))
@@ -50,13 +50,45 @@ class DemandsController {
   static async attDemand(req, res) {
     const { id } = req.params
     const newData = req.body
+    const data = await demandsService.findOneRegistry(Number(id))
+    const teste = new Date().toLocaleDateString()
+    console.log(teste)
     try {
-      const update = await demandsService.attRegistry(newData, Number(id))
+      if (
+        newData.status === 'Em Desenvolvimento' &&
+        data.status != 'Em Desenvolvimento'
+      ) {
+        await database.Demands.update(newData, {
+          where: { id: Number(id) },
+        })
+        await database.Demands.update(
+          { start_development: new Date().toLocaleDateString() },
+          { where: { id: Number(id) } }
+        )
+      } else if (
+        newData.status === 'Em Produção' &&
+        data.status !== 'Em Produção'
+      ) {
+        await database.Demands.update(newData, {
+          where: { id: Number(id) },
+        })
+        await database.Demands.update(
+          { end_development: new Date().toLocaleDateString() },
+          { where: { id: Number(id) } }
+        )
+        console.log(new Date())
+        const data = await demandsService.findOneRegistry(Number(id))
+        console.log(data.end_development)
+      } else {
+        await demandsService.attRegistry(newData, Number(id))
+      }
       return res.status(200).json({ mensagem: `id ${id} atualizado` })
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
+
+  //Status => Aguardando, em Desenvolvimento, em Produção
 
   static async deleteDemand(req, res) {
     const { id } = req.params

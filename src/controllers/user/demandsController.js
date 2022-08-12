@@ -2,6 +2,7 @@ const { DemandsService, ReferenceLinkServices } = require('../../services')
 const demandsService = new DemandsService()
 const referenceLinkService = new ReferenceLinkServices()
 const database = require('../../db/models')
+const jwt = require('jsonwebtoken')
 
 class DemandsController {
   static async findAllDemands(req, res) {

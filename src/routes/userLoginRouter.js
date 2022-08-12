@@ -1,13 +1,14 @@
 const { Router } = require('express')
+const { verifyPassword } = require('../controllers/user/demandsController')
 const UserLoginController = require('../controllers/userLogin/userLoginController')
 const router = Router()
 
 router
-  .post('/user', UserLoginController.createUser)
-  .get('/user', UserLoginController.findAllUsers)
-  .get('/user/:id', UserLoginController.findOneUser)
-  .put('/user/:id', UserLoginController.attUser)
-  .delete('/user/:id', UserLoginController.deleteUser)
-  .post('/user/login', UserLoginController.login)
+  .post('/user', verifyPassword, UserLoginController.createUser)
+  .get('/user', verifyPassword, UserLoginController.findAllUsers)
+  .get('/user/:id', verifyPassword, UserLoginController.findOneUser)
+  .put('/user/:id', verifyPassword, UserLoginController.attUser)
+  .delete('/user/:id', verifyPassword, UserLoginController.deleteUser)
+  .post('/user/login', verifyPassword, UserLoginController.login)
 
 module.exports = router

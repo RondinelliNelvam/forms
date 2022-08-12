@@ -1,10 +1,10 @@
 const { UserLoginServices } = require('../../services')
-const userLoginServices = new UserLoginServices()
+const userLoginService = new UserLoginServices()
 
 class UserLoginController {
   static async findAllUsers(req, res) {
     try {
-      const usersList = await userLoginServices.findAllRegistry()
+      const usersList = await userLoginService.findAllRegistry()
       return res.status(200).json(usersList)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -13,16 +13,20 @@ class UserLoginController {
   static async findOneUser(req, res) {
     const { id } = req.params
     try {
-      const oneUsers = await userLoginServices.findOneRegistry(Number(id))
+      const oneUsers = await userLoginService.findOneRegistry(Number(id))
       return res.status(200).json(oneUsers)
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
   static async createUser(req, res) {
-    const users = req.body
+    const newData = req.body
     try {
-      const newUsers = await userLoginServices.createRegistry(users)
+      newData.passwordHash = await userLoginService.generatePassHash(
+        newData.passwordHash
+      )
+      const newUsers = await userLoginService.createRegistry(newData)
+
       return res.status(200).json(newUsers)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -32,7 +36,7 @@ class UserLoginController {
     const { id } = req.params
     const newData = req.body
     try {
-      await userLoginServices.attRegistry(newData, Number(id))
+      await userLoginService.attRegistry(newData, Number(id))
       return res.status(200).json({ mensagem: `id ${id} atualizado` })
     } catch (error) {
       return res.status(500).json(error.message)
@@ -42,7 +46,7 @@ class UserLoginController {
   static async deleteUser(req, res) {
     const { id } = req.params
     try {
-      await userLoginServices.deleteRegistry(Number(id))
+      await userLoginService.deleteRegistry(Number(id))
       return res
         .status(200)
         .json({ mensagem: `id ${id} foi deletado com sucesso` })

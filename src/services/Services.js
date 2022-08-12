@@ -1,4 +1,5 @@
 const database = require('../db/models')
+const bcrypt = require('bcrypt')
 
 class Services {
   constructor(nameModel) {
@@ -20,6 +21,10 @@ class Services {
   async deleteRegistry(id) {
     console.log(id)
     return database[this.nameModel].destroy({ where: { id } })
+  }
+  async generatePassHash(password) {
+    const priceHash = 12
+    return bcrypt.hash(password, priceHash)
   }
 }
 

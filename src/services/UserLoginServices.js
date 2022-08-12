@@ -1,9 +1,9 @@
 const Services = require('./Services')
 
-class UserLogin extends Services {
+class UserLoginServices extends Services {
   constructor() {
-    super('userLogin')
+    super('usersLogin')
   }
 }
 
-module.exports = UserLogin
+module.exports = UserLoginServices

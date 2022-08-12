@@ -3,13 +3,6 @@ const userLoginService = new UserLoginServices()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-async function verificação(req, res, next) {
-  try {
-    const payload = jwt.verify(req.headers.token, 'senha-secreta')
-    next()
-  } catch (error) {}
-}
-
 class UserLoginController {
   static async findAllUsers(req, res) {
     try {

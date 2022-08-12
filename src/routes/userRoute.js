@@ -4,7 +4,11 @@ const ReferenceLinkController = require('../controllers/user/referenceController
 const router = Router()
 
 router
-  .post('/demand', DemandsController.createDemand)
+  .post(
+    '/demand',
+    DemandsController.verifyPassword,
+    DemandsController.createDemand
+  )
   .get('/demand', DemandsController.findAllDemands)
   .get('/demand/:id', DemandsController.findOneDemand)
   .put('/demand/:id', DemandsController.attDemand)

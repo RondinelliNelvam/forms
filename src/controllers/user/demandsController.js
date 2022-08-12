@@ -48,32 +48,29 @@ class DemandsController {
     }
   }
   static async attDemand(req, res) {
+    //TODO melhoria no sistema utilizando Object
+    //TODO padronizar dos nomes
+    //TODO criar erros
     const { id } = req.params
     const newData = req.body
-    const data = await demandsService.findOneRegistry(Number(id))
-    const teste = new Date().toLocaleDateString()
-    console.log(teste)
+    const data = await demandsService.findOneRegistry(id)
     try {
       if (
         newData.status === 'Em Desenvolvimento' &&
         data.status != 'Em Desenvolvimento'
       ) {
-        await database.Demands.update(newData, {
-          where: { id: Number(id) },
+        await data.update({
+          ...newData,
+          start_development: new Date(),
+          end_development: null,
         })
-        await database.Demands.update(
-          { start_development: new Date().toLocaleDateString() },
-          { where: { id: Number(id) } }
-        )
       } else if (
         newData.status === 'Em Produção' &&
         data.status !== 'Em Produção'
       ) {
-        await database.Demands.update(newData, {
-          where: { id: Number(id) },
-        })
+        await data.update({ ...newData })
         await database.Demands.update(
-          { end_development: new Date().toLocaleDateString() },
+          { end_development: new Date() },
           { where: { id: Number(id) } }
         )
         console.log(new Date())

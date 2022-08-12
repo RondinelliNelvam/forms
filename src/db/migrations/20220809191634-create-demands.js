@@ -35,10 +35,10 @@ module.exports = {
         type: Sequelize.STRING,
       },
       start_development: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
       },
       end_development: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,

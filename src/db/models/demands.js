@@ -20,8 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       demand_type: DataTypes.STRING,
       status: DataTypes.STRING,
       post: DataTypes.STRING,
-      start_development: DataTypes.DATEONLY,
-      end_development: DataTypes.DATEONLY,
+      start_development: DataTypes.DATE,
+      end_development: DataTypes.DATE,
     },
     {
       sequelize,

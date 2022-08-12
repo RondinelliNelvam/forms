@@ -28,13 +28,11 @@ class DemandsController {
       const newDemand = await demandsService.createRegistry(demand)
       const demandId = newDemand.id
       let newReference = []
-      console.log(demandId)
       if (newDemand) {
         newReference = referenceLink.map((object) => ({
           link: object.link,
           demandsId: demandId,
         }))
-        console.log(newReference)
         // for (let i = 0; i < newReference.length; i++) {
         for (let i = 0; i < newReference.length; i++) {
           await referenceLinkService.createRegistry(newReference[i])

@@ -19,7 +19,7 @@ class UserLoginController {
       return res.status(500).json(error.message)
     }
   }
-  static async createUsers(req, res) {
+  static async createUser(req, res) {
     const users = req.body
     try {
       const newUsers = await userLoginServices.createRegistry(users)
@@ -28,7 +28,7 @@ class UserLoginController {
       return res.status(500).json(error.message)
     }
   }
-  static async attUsers(req, res) {
+  static async attUser(req, res) {
     const { id } = req.params
     const newData = req.body
     try {

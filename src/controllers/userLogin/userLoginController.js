@@ -2,7 +2,9 @@ const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const blocklist = require('../../../redis/blockListControllers')
+const blocklist = require('../../../redis/blocklistController')
+const { createOpaqueToken } = require('../../utils/validations')
+
 class UserLoginController {
   static async findAllUsers(req, res) {
     try {
@@ -65,7 +67,8 @@ class UserLoginController {
         return res.status(404).json({ message: 'Not Found' })
       }
       await bcrypt.compare(password, login.passwordHash)
-      const tokenJWT = jwt.sign(
+      const refreshToken = await createOpaqueToken(login)
+      const acessToken = jwt.sign(
         { id: login.id, email: login.email },
         'senha-secreta',
         { expiresIn: '15m' }
@@ -77,26 +80,24 @@ class UserLoginController {
           email: login.email,
           name: login.name,
         },
-        token: tokenJWT,
+        token: acessToken,
+        refreshToken: refreshToken,
       })
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
+
   static async logout(req, res) {
-    const { email, password } = req.body
     const token = req.headers.token
     try {
-      const login = await userLoginService.findOneEmail(email)
-      if (!login) {
-        return res.status(404).json({ message: 'Not Found' })
-      }
       await blocklist.add(token)
-      res.status(204).send({ mensagem: 'deubom' })
+      return res.status(200).json({ mensagem: 'logout bem sucedido' })
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
 }
+
 //TODO MUDAR A SENHA SECRETA PARA .ENV
 module.exports = UserLoginController

@@ -2,7 +2,7 @@ const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const blocklist = require('../../../redis/blockListControllers')
 class UserLoginController {
   static async findAllUsers(req, res) {
     try {
@@ -56,6 +56,7 @@ class UserLoginController {
       return res.status(500).json(error.message)
     }
   }
+  //TODO arrumar os controllers e services e utils
   static async login(req, res) {
     const { email, password } = req.body
     try {
@@ -66,7 +67,8 @@ class UserLoginController {
       await bcrypt.compare(password, login.passwordHash)
       const tokenJWT = jwt.sign(
         { id: login.id, email: login.email },
-        'senha-secreta'
+        'senha-secreta',
+        { expiresIn: '15m' }
       )
 
       return res.status(200).json({
@@ -77,6 +79,20 @@ class UserLoginController {
         },
         token: tokenJWT,
       })
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
+  static async logout(req, res) {
+    const { email, password } = req.body
+    const token = req.headers.token
+    try {
+      const login = await userLoginService.findOneEmail(email)
+      if (!login) {
+        return res.status(404).json({ message: 'Not Found' })
+      }
+      await blocklist.add(token)
+      res.status(204).send({ mensagem: 'deubom' })
     } catch (error) {
       return res.status(500).json(error.message)
     }

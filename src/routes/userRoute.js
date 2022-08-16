@@ -1,6 +1,6 @@
 const { Router } = require('express')
-const { verifyPassword } = require('../controllers/user/demandsController')
 const DemandsController = require('../controllers/user/demandsController')
+const verifyPassword = require('../utils/validations')
 const ReferenceLinkController = require('../controllers/user/referenceController')
 const router = Router()
 

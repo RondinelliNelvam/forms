@@ -8,3 +8,5 @@ async function verifyPassword(req, res, next) {
     return res.status(500).json(error.message)
   }
 }
+
+module.exports = verifyPassword

@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken')
-const blocklist = require('../../redis/blocklistController')
+const blocklist = require('../../redis/blocklist')
 
 const crypto = require('crypto')
 const moment = require('moment')
 const allowlist = require('../../redis/allowlist')
-async function verifyPassword(req, res, next) {
+
+async function validateToken(req, res, next) {
   try {
     const payload = jwt.verify(req.headers.token, 'senha-secreta')
     await verifyTokenBlocklist(req.headers.token)
@@ -24,5 +25,22 @@ async function createOpaqueToken(user) {
   await allowlist.add(tokenOpaque, user.id, dateExpiration)
   return tokenOpaque
 }
+async function verifyRefreshToken(refreshToken) {
+  try {
+    const id = await allowlist.searchValue(refreshToken)
+    return id
+  } catch (error) {
+    return res.status(500).json(error.message)
+  }
+}
+async function invalidateRefreshToken(refreshToken) {
+  await allowlist.delete(refreshToken)
+}
 
-module.exports = { verifyPassword, verifyTokenBlocklist, createOpaqueToken }
+module.exports = {
+  validateToken,
+  verifyTokenBlocklist,
+  createOpaqueToken,
+  verifyRefreshToken,
+  invalidateRefreshToken,
+}

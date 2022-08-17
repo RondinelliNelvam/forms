@@ -1,38 +1,38 @@
 const { Router } = require('express')
 const SystemController = require('../controllers/adm/systemController')
 const AuthorizedController = require('../controllers/adm/authorizedPersonsController')
-const { verifyPassword } = require('../utils/validations')
+const { validateToken } = require('../utils/validations')
 const router = Router()
 
 router
-  .post('/system', verifyPassword, SystemController.createSystem)
-  .put('/system/:id', verifyPassword, SystemController.attSystem)
-  .get('/system', verifyPassword, SystemController.findAllSystem)
-  .get('/system/:id', verifyPassword, SystemController.findOneSystem)
-  .delete('/system/:id', verifyPassword, SystemController.deleteSystem)
+  .post('/system', validateToken, SystemController.createSystem)
+  .put('/system/:id', validateToken, SystemController.attSystem)
+  .get('/system', validateToken, SystemController.findAllSystem)
+  .get('/system/:id', validateToken, SystemController.findOneSystem)
+  .delete('/system/:id', validateToken, SystemController.deleteSystem)
   .post(
     '/authorizedPerson',
-    verifyPassword,
+    validateToken,
     AuthorizedController.createAuthorizedPerson
   )
   .put(
     '/authorizedPerson/:id',
-    verifyPassword,
+    validateToken,
     AuthorizedController.attAuthorizedPerson
   )
   .get(
     '/authorizedPerson',
-    verifyPassword,
+    validateToken,
     AuthorizedController.findAllAuthorizedPerson
   )
   .get(
     '/authorizedPerson/:id',
-    verifyPassword,
+    validateToken,
     AuthorizedController.findOneAuthorizedPerson
   )
   .delete(
     '/authorizedPerson/:id',
-    verifyPassword,
+    validateToken,
     AuthorizedController.deleteAuthorizedPerson
   )
 

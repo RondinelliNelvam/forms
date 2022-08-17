@@ -2,8 +2,12 @@ const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const blocklist = require('../../../redis/blocklistController')
-const { createOpaqueToken } = require('../../utils/validations')
+const blocklist = require('../../../redis/blocklist')
+const {
+  createOpaqueToken,
+  verifyRefreshToken,
+  invalidateRefreshToken,
+} = require('../../utils/validations')
 
 class UserLoginController {
   static async findAllUsers(req, res) {
@@ -17,8 +21,8 @@ class UserLoginController {
   static async findOneUser(req, res) {
     const { id } = req.params
     try {
-      const oneUsers = await userLoginService.findOneRegistry(Number(id))
-      return res.status(200).json(oneUsers)
+      const oneUser = await userLoginService.findOneRegistry(Number(id))
+      return res.status(200).json(oneUser)
     } catch (error) {
       return res.status(500).json(error.message)
     }
@@ -73,7 +77,7 @@ class UserLoginController {
         'senha-secreta',
         { expiresIn: '15m' }
       )
-
+      res.set('Authorization', acessToken)
       return res.status(200).json({
         user: {
           id: login.id,
@@ -92,7 +96,34 @@ class UserLoginController {
     const token = req.headers.token
     try {
       await blocklist.add(token)
+      await invalidateRefreshToken(req.headers.refreshtoken)
       return res.status(200).json({ mensagem: 'logout bem sucedido' })
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+  }
+  static async validateRefreshToken(req, res, next) {
+    const refreshToken = req.headers.refreshtoken
+    try {
+      const id = await verifyRefreshToken(req.headers.refreshtoken)
+      await invalidateRefreshToken(req.headers.refreshtoken)
+      const oneUser = await userLoginService.findOneRegistry(Number(id))
+      const refreshToken = await createOpaqueToken(oneUser)
+      const acessToken = jwt.sign(
+        { id: oneUser.id, email: oneUser.email },
+        'senha-secreta',
+        { expiresIn: '15m' }
+      )
+      res.set('Authorization', acessToken)
+      return res.status(200).json({
+        user: {
+          id: oneUser.id,
+          email: oneUser.email,
+          name: oneUser.name,
+        },
+        token: acessToken,
+        refreshToken: refreshToken,
+      })
     } catch (error) {
       return res.status(500).json(error.message)
     }

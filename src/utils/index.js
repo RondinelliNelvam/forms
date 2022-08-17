@@ -1,3 +1,6 @@
+require('dotenv').config()
+
 module.exports = {
-  validations: require('./validations'),
+  senhaSecreta:
+    process.env.NODE_ENV == 'dev' ? 'senha-secreta' : process.env.SENHASECRETA,
 }

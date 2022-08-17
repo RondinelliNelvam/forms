@@ -1,9 +1,4 @@
-const jwt = require('jsonwebtoken')
-const { createHash } = require('crypto')
 const { promisify } = require('util')
-function generateTokenHash(token) {
-  return createHash('sha256').update(token).digest('hex')
-}
 
 module.exports = (list) => {
   const existsAsync = promisify(list.exists).bind(list)
@@ -26,17 +21,5 @@ module.exports = (list) => {
     async delete(key) {
       await delAsync(key)
     },
-
-    // add: async (token) => {
-    //   const dateExpiration = jwt.decode(token).exp
-    //   const tokenHash = generateTokenHash(token)
-    //   await setAsync(tokenHash, '')
-    //   blocklist .expireat(tokenHash, dateExpiration)
-    // },
-    // hasToken: async (token) => {
-    //   const tokenHash = generateTokenHash(token)
-    //   const result = await existsAsync(tokenHash)
-    //   return result === 1
-    // },
   }
 }

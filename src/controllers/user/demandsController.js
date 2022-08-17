@@ -29,12 +29,12 @@ class DemandsController {
       const newDemand = await demandsService.createRegistry(demand)
       const demandId = newDemand.id
       let newReference = []
+      //TODO Verificar essa parte, existe como mudar pra forEach+For...of?
       if (newDemand) {
         newReference = referenceLink.map((object) => ({
           link: object.link,
           demandsId: demandId,
         }))
-        // for (let i = 0; i < newReference.length; i++) {
         for (let i = 0; i < newReference.length; i++) {
           await referenceLinkService.createRegistry(newReference[i])
         }
@@ -49,33 +49,27 @@ class DemandsController {
 
   static async attDemand(req, res) {
     //TODO melhoria no sistema utilizando Object
-    //TODO padronizar dos nomes
     //TODO criar erros
     const { id } = req.params
     const newData = req.body
     const data = await demandsService.findOneRegistry(id)
     try {
       if (
-        newData.status === 'Em Desenvolvimento' &&
-        data.status != 'Em Desenvolvimento'
+        newData.status === 'Desenvolvimento' &&
+        data.status != 'Desenvolvimento'
       ) {
         await data.update({
           ...newData,
           start_development: new Date(),
           end_development: null,
         })
-      } else if (
-        newData.status === 'Em Produção' &&
-        data.status !== 'Em Produção'
-      ) {
+      } else if (newData.status === 'Produção' && data.status !== 'Produção') {
         await data.update({ ...newData })
         await database.Demands.update(
           { end_development: new Date() },
           { where: { id: Number(id) } }
         )
-        console.log(new Date())
         const data = await demandsService.findOneRegistry(Number(id))
-        console.log(data.end_development)
       } else {
         await demandsService.attRegistry(newData, Number(id))
       }

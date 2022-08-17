@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken')
 const blocklist = require('../../redis/blocklist')
 
-const crypto = require('crypto')
-const moment = require('moment')
 const allowlist = require('../../redis/allowlist')
+const { senhaSecreta } = require('.')
+
+// await bcrypt.compare(password, login.passwordHash)
 
 async function validateToken(req, res, next) {
   try {
-    const payload = jwt.verify(req.headers.token, 'senha-secreta')
+    const payload = jwt.verify(req.headers.token, senhaSecreta)
     await verifyTokenBlocklist(req.headers.token)
     next()
   } catch (error) {
@@ -19,12 +20,7 @@ async function verifyTokenBlocklist(token) {
   if (tokenOnBlocklist)
     throw new jwt.JsonWebTokenError('Token Inválido por logout!')
 }
-async function createOpaqueToken(user) {
-  const tokenOpaque = crypto.randomBytes(24).toString('hex')
-  const dateExpiration = moment().add(5, 'd').unix()
-  await allowlist.add(tokenOpaque, user.id, dateExpiration)
-  return tokenOpaque
-}
+
 async function verifyRefreshToken(refreshToken) {
   try {
     const id = await allowlist.searchValue(refreshToken)
@@ -40,7 +36,6 @@ async function invalidateRefreshToken(refreshToken) {
 module.exports = {
   validateToken,
   verifyTokenBlocklist,
-  createOpaqueToken,
   verifyRefreshToken,
   invalidateRefreshToken,
 }

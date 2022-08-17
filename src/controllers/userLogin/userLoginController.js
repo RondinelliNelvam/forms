@@ -1,12 +1,11 @@
 const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 const blocklist = require('../../../redis/blocklist')
+const { regenTokens } = require('../../utils/tokens')
 const {
-  createOpaqueToken,
-  verifyRefreshToken,
   invalidateRefreshToken,
+  verifyRefreshToken,
 } = require('../../utils/validations')
 
 class UserLoginController {
@@ -34,7 +33,6 @@ class UserLoginController {
         newData.passwordHash
       )
       const newUsers = await userLoginService.createRegistry(newData)
-
       return res.status(201).json(newUsers)
     } catch (error) {
       return res.status(500).json(error.message)
@@ -62,7 +60,6 @@ class UserLoginController {
       return res.status(500).json(error.message)
     }
   }
-  //TODO arrumar os controllers e services e utils
   static async login(req, res) {
     const { email, password } = req.body
     try {
@@ -71,21 +68,16 @@ class UserLoginController {
         return res.status(404).json({ message: 'Not Found' })
       }
       await bcrypt.compare(password, login.passwordHash)
-      const refreshToken = await createOpaqueToken(login)
-      const acessToken = jwt.sign(
-        { id: login.id, email: login.email },
-        'senha-secreta',
-        { expiresIn: '15m' }
-      )
-      res.set('Authorization', acessToken)
+      const tokens = await regenTokens(login)
+      res.set('Authorization', tokens[1])
       return res.status(200).json({
         user: {
           id: login.id,
           email: login.email,
           name: login.name,
         },
-        token: acessToken,
-        refreshToken: refreshToken,
+        token: tokens[1],
+        refreshToken: tokens[0],
       })
     } catch (error) {
       return res.status(500).json(error.message)
@@ -93,36 +85,29 @@ class UserLoginController {
   }
 
   static async logout(req, res) {
-    const token = req.headers.token
     try {
-      await blocklist.add(token)
+      await blocklist.add(req.headers.token)
       await invalidateRefreshToken(req.headers.refreshtoken)
       return res.status(200).json({ mensagem: 'logout bem sucedido' })
     } catch (error) {
       return res.status(500).json(error.message)
     }
   }
-  static async validateRefreshToken(req, res, next) {
-    const refreshToken = req.headers.refreshtoken
+  static async validateRefreshToken(req, res) {
     try {
       const id = await verifyRefreshToken(req.headers.refreshtoken)
       await invalidateRefreshToken(req.headers.refreshtoken)
-      const oneUser = await userLoginService.findOneRegistry(Number(id))
-      const refreshToken = await createOpaqueToken(oneUser)
-      const acessToken = jwt.sign(
-        { id: oneUser.id, email: oneUser.email },
-        'senha-secreta',
-        { expiresIn: '15m' }
-      )
-      res.set('Authorization', acessToken)
+      const oneUser = await userLoginService.findOneRegistry(id)
+      const tokens = await regenTokens(oneUser)
+      res.set('Authorization', tokens[1])
       return res.status(200).json({
         user: {
           id: oneUser.id,
           email: oneUser.email,
           name: oneUser.name,
         },
-        token: acessToken,
-        refreshToken: refreshToken,
+        token: tokens[1],
+        refreshToken: tokens[0],
       })
     } catch (error) {
       return res.status(500).json(error.message)
@@ -130,5 +115,4 @@ class UserLoginController {
   }
 }
 
-//TODO MUDAR A SENHA SECRETA PARA .ENV
 module.exports = UserLoginController

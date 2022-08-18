@@ -5,8 +5,8 @@ const { verifyRefreshToken } = require('./validations')
 const { AuthorizedPersonsServices, UserLoginServices } = require('../services')
 const authorizedPersonsService = new AuthorizedPersonsServices()
 const userLoginService = new UserLoginServices()
-
 require('dotenv').config()
+
 const emailConfig = {
   host: process.env.NODE_ENV == 'dev' ? email.emailHost : process.env.EMAILHOST,
   port: process.env.NODE_ENV == 'dev' ? email.emailPort : process.env.EMAILPORT,
@@ -22,7 +22,7 @@ const emailConfig = {
 
 async function sendEmail(emailUser, emailAuth, demandId) {
   let transporter = nodemailer.createTransport(emailConfig)
-  let info = await transporter.sendMail({
+  await transporter.sendMail({
     from:
       process.env.NODE_ENV == 'dev'
         ? '"Fred Foo 👻" <foo@example.com>'
@@ -35,9 +35,6 @@ async function sendEmail(emailUser, emailAuth, demandId) {
     text: `Olá, a demanda de número nº${demandId} foi criada!`,
     html: `<b>Olá, a demanda de número nº${demandId} foi criada!</b>`,
   })
-
-  console.log('Message sent: %s', info.messageId)
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
 }
 
 async function searchEmails(refreshToken, authorizedPersonId) {

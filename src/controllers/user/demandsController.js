@@ -1,14 +1,8 @@
-const {
-  DemandsService,
-  ReferenceLinkServices,
-  AuthorizedPersonsServices,
-} = require('../../services')
+const { DemandsService, ReferenceLinkServices } = require('../../services')
 const demandsService = new DemandsService()
 const referenceLinkService = new ReferenceLinkServices()
-const authorizedPersonsService = new AuthorizedPersonsServices()
 const database = require('../../db/models')
-const jwt = require('jsonwebtoken')
-const sendEmail = require('../../utils/email')
+const { sendEmail, searchEmails } = require('../../utils/email')
 
 class DemandsController {
   static async findAllDemands(req, res) {
@@ -31,10 +25,10 @@ class DemandsController {
   static async createDemand(req, res) {
     const demand = req.body
     const referenceLink = demand.referencia
+    let newReference = []
     try {
       const newDemand = await demandsService.createRegistry(demand)
       const demandId = newDemand.id
-      let newReference = []
       //TODO Verificar essa parte, existe como mudar pra forEach+For...of?
       if (newDemand) {
         newReference = referenceLink.map((object) => ({
@@ -45,10 +39,11 @@ class DemandsController {
           await referenceLinkService.createRegistry(newReference[i])
         }
       }
-      const authPerson = await authorizedPersonsService.findOneRegistry(
+      const emails = await searchEmails(
+        req.headers.refreshtoken,
         demand.AuthorizedPersonId
       )
-      await sendEmail(authPerson.email, demandId)
+      await sendEmail(emails[0], emails[1], demandId)
       return res
         .status(201)
         .json({ Demanda: newDemand, Referencia: newReference })

@@ -1,8 +1,14 @@
-const { DemandsService, ReferenceLinkServices } = require('../../services')
+const {
+  DemandsService,
+  ReferenceLinkServices,
+  AuthorizedPersonsServices,
+} = require('../../services')
 const demandsService = new DemandsService()
 const referenceLinkService = new ReferenceLinkServices()
+const authorizedPersonsService = new AuthorizedPersonsServices()
 const database = require('../../db/models')
 const jwt = require('jsonwebtoken')
+const sendEmail = require('../../utils/email')
 
 class DemandsController {
   static async findAllDemands(req, res) {
@@ -39,6 +45,10 @@ class DemandsController {
           await referenceLinkService.createRegistry(newReference[i])
         }
       }
+      const authPerson = await authorizedPersonsService.findOneRegistry(
+        demand.AuthorizedPersonId
+      )
+      await sendEmail(authPerson.email, demandId)
       return res
         .status(201)
         .json({ Demanda: newDemand, Referencia: newReference })

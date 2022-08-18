@@ -1,11 +1,11 @@
 const { UserLoginServices } = require('../../services')
 const userLoginService = new UserLoginServices()
-const bcrypt = require('bcrypt')
 const blocklist = require('../../../redis/blocklist')
 const { regenTokens } = require('../../utils/tokens')
 const {
   invalidateRefreshToken,
   verifyRefreshToken,
+  verifyPassword,
 } = require('../../utils/validations')
 
 class UserLoginController {
@@ -65,9 +65,9 @@ class UserLoginController {
     try {
       const login = await userLoginService.findOneEmail(email)
       if (!login) {
-        return res.status(404).json({ message: 'Not Found' })
+        return res.status(404).json({ message: 'Usuário não encontrado' })
       }
-      await bcrypt.compare(password, login.passwordHash)
+      await verifyPassword(password, login.passwordHash)
       const tokens = await regenTokens(login)
       res.set('Authorization', tokens[1])
       return res.status(200).json({
@@ -96,6 +96,7 @@ class UserLoginController {
   static async validateRefreshToken(req, res) {
     try {
       const id = await verifyRefreshToken(req.headers.refreshtoken)
+
       await invalidateRefreshToken(req.headers.refreshtoken)
       const oneUser = await userLoginService.findOneRegistry(id)
       const tokens = await regenTokens(oneUser)
@@ -110,6 +111,9 @@ class UserLoginController {
         refreshToken: tokens[0],
       })
     } catch (error) {
+      if (error.name === 'InvalidArgumentError') {
+        return res.status(401).json({ error: error.message })
+      }
       return res.status(500).json(error.message)
     }
   }

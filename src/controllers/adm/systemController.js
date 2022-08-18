@@ -23,7 +23,7 @@ class SystemController {
     const system = req.body
     try {
       const newSystem = await systemServices.createRegistry(system)
-      return res.status(200).json(newSystem)
+      return res.status(201).json(newSystem)
     } catch (error) {
       return res.status(500).json(error.message)
     }

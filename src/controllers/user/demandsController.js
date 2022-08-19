@@ -54,7 +54,6 @@ class DemandsController {
 
   static async attDemand(req, res) {
     //TODO melhoria no sistema utilizando Object
-    //TODO criar erros
     const { id } = req.params
     const newData = req.body
     const data = await demandsService.findOneRegistry(id)

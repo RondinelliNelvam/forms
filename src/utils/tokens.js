@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 const { senhaSecreta } = require('.')
 const { createHash } = require('crypto')
 const allowlist = require('../../redis/allowlist')
-const crypto = require('crypto')
 const moment = require('moment')
+const { v4: uuidv4 } = require('uuid')
 
 function generateTokenHash(token) {
   return createHash('sha256').update(token).digest('hex')
@@ -13,8 +13,7 @@ async function generatePassHash(password) {
   return bcrypt.hash(password, priceHash)
 }
 async function createOpaqueToken(user) {
-  //TODO Atualizar o Crypto para UUID v4
-  const tokenOpaque = crypto.randomBytes(24).toString('hex')
+  const tokenOpaque = uuidv4()
   const dateExpiration = moment().add(5, 'd').unix()
   await allowlist.add(tokenOpaque, user.id, dateExpiration)
   return tokenOpaque
